@@ -492,10 +492,76 @@ A correct autopilot decision depends on:
 
 ## 15. Simulation Charts
 
-The following interactive chart pack validates the simulated decision logic for selecting the third vehicle.
+The following chart pack validates the simulated decision logic for selecting the third vehicle and makes the recommendation easier to explain to dispatchers, operations managers, and product stakeholders.
 
 Interactive version: [Open simulation charts](./simulation_charts.html)
 
-Preview:
+### 15.1 Route Simulation Map
 
-![Simulation Charts](./images/simulation_charts.png)
+![Autopilot Load Selection Route Simulation](<./geo-graph (1).png>)
+
+This route map shows the confirmed trip structure and all three candidate options on top of the same geographic corridor.
+The blue line represents the existing committed route from Boston through Des Moines to Denver.
+The highlighted solid candidate line represents the selected option, while the dashed routes represent alternatives considered but not chosen.
+This visual makes it immediately clear that Candidate A stays closest to the current route plan, while Candidate C introduces a much larger detour toward Salt Lake City.
+
+### 15.2 Profit by Candidate
+
+![Profit by Candidate](<./line-simple (11).png>)
+
+This chart compares the direct incremental profit contribution of each candidate load.
+Candidate B produces the highest raw profit at **$907.00**, followed by Candidate C at **$843.50**, and Candidate A at **$811.75**.
+On profit alone, Candidate B appears strongest, which is useful because it shows why a purely revenue-driven autopilot could make the wrong decision if it ignores route structure and execution risk.
+
+### 15.3 Time-Adjusted Profit
+
+![Time-Adjusted Profit](<./line-simple (13).png>)
+
+Time-adjusted profit normalizes each option for delivery delay and route elongation.
+Candidate B still leads at **$697.69**, Candidate A remains close at **$676.46**, and Candidate C drops sharply to **$443.95** because of the much larger time burden.
+This confirms that Candidate C's higher payout does not translate into the best operational outcome once time cost is included.
+
+### 15.4 Projected Trip RPM vs Target
+
+![Projected Trip RPM vs Target](<./line-simple (14).png>)
+
+This chart compares the projected full-trip RPM for each candidate against the minimum target of **$2.00 per mile**.
+Candidate A reaches **2.21**, Candidate B stays slightly above threshold at **2.08**, and Candidate C falls below the target at **1.79**.
+This is a critical screening chart because it shows that Candidate C degrades the economics of the overall trip even though its payout is attractive.
+
+### 15.5 Final Weighted Score
+
+![Final Weighted Score](<./line-simple (15).png>)
+
+The final weighted score combines route fit, risk, RPM compliance, profitability, and time efficiency into a single decision metric.
+Candidate A scores **90**, Candidate B scores **82**, and Candidate C scores **48**.
+This is the key summary chart for autopilot selection because it transforms several competing dimensions into one explainable ranking and supports why Candidate A should be auto-booked.
+
+### 15.6 Multi-Factor Decision Analysis
+
+![Multi-Factor Decision Analysis](<./line-simple (16).png>)
+
+The radar chart shows how each candidate performs across the main decision dimensions: profit score, low-risk score, RPM compliance, route fit, and time efficiency.
+Candidate A is the most balanced option across all dimensions, Candidate B is strong economically but weaker on risk and route fit, and Candidate C underperforms on most operational factors despite its attractive payout.
+This chart is useful for product demos because it shows that the system is not using a single rule, but making a genuinely multi-objective decision.
+
+### 15.7 Profit Breakdown by Candidate
+
+![Profit Breakdown by Candidate](<./line-simple (10).png>)
+
+This breakdown separates payout, cost burden, and final profit for each candidate.
+Candidate C has the highest payout at **$1,400**, but it also carries the largest cost penalty at **-$556.50**, which compresses its final profit.
+Candidate A and Candidate B generate more efficient profit because their additional route burden is much lower.
+This chart helps explain why gross payout should never be used as the only booking criterion.
+
+### 15.8 Supporting Interpretation
+
+Together, these charts show why the selected recommendation is **Candidate A — 2020 Hyundai Sonata**:
+
+- it preserves the best route structure on the map
+- it keeps projected trip RPM safely above target
+- it delivers strong profit with low added complexity
+- it achieves the highest final weighted decision score
+- it remains operationally safer than the higher-detour alternatives
+
+In other words, the chart pack confirms that the autopilot is selecting the **best trip-level outcome**, not simply the highest payout or the highest isolated raw profit.
