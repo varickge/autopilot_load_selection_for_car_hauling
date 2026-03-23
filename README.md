@@ -1,0 +1,2 @@
+# autopilot_load_selection_for_car_hauling
+Interview task
