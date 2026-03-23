@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Autopilot Load Selection - Simulation Charts</title>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 24px;
+      background: #ffffff;
+      color: #222;
+    }
+    h1, h2 {
+      margin-bottom: 8px;
+    }
+    p {
+      margin-top: 0;
+      margin-bottom: 18px;
+      color: #555;
+    }
+    .chart {
+      width: 100%;
+      height: 420px;
+      margin: 24px 0 40px 0;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .note {
+      background: #f7f7f7;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 20px;
+    }
+    @media (min-width: 1100px) {
+      .grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Autopilot Load Selection - Simulation Charts</h1>
+  <p>
+    Validation example for selecting the third vehicle based on route fit, profitability,
+    time efficiency, and operational risk.
+  </p>
+
+  <div class="note">
+    Confirmed vehicles already on trailer:
+    Toyota Camry → Des Moines, IA and Ford F-150 → Denver, CO.
+    Candidates compete for the remaining third slot.
+  </div>
+
+  <div class="grid">
+    <div id="profitChart" class="chart"></div>
+    <div id="timeAdjustedChart" class="chart"></div>
+    <div id="rpmChart" class="chart"></div>
+    <div id="scoreChart" class="chart"></div>
+  </div>
+
+  <div id="radarChart" class="chart"></div>
+
+  <script>
+    const simulationData = [
+      {
+        candidate: "A",
+        vin: "5NPE24AF8FH085421",
+        vehicle: "2020 Hyundai Sonata",
+        pickup: "Boston, MA",
+        delivery: "Chicago, IL",
+        payout: 900,
+        extraMiles: 45,
+        extraTime: 0.2,
+        brokerScore: "A",
+        riskLevel: "Low",
+        profit: 811.75,
+        profitPerMile: 18.04,
+        timeAdjustedProfit: 676.46,
+        projectedTripRPM: 2.21,
+        routeFitScore: 95,
+        riskScore: 15,
+        finalWeightedScore: 90
+      },
+      {
+        candidate: "B",
+        vin: "3CZRM3H59FG704221",
+        vehicle: "2019 Honda CR-V",
+        pickup: "Worcester, MA",
+        delivery: "Omaha, NE",
+        payout: 1050,
+        extraMiles: 80,
+        extraTime: 0.3,
+        brokerScore: "B",
+        riskLevel: "Medium",
+        profit: 907.00,
+        profitPerMile: 11.34,
+        timeAdjustedProfit: 697.69,
+        projectedTripRPM: 2.08,
+        routeFitScore: 78,
+        riskScore: 35,
+        finalWeightedScore: 82
+      },
+      {
+        candidate: "C",
+        vin: "JN1AZ4EH3DM430987",
+        vehicle: "2021 Nissan 370Z",
+        pickup: "Providence, RI",
+        delivery: "Salt Lake City, UT",
+        payout: 1400,
+        extraMiles: 390,
+        extraTime: 0.9,
+        brokerScore: "A",
+        riskLevel: "High",
+        profit: 843.50,
+        profitPerMile: 2.16,
+        timeAdjustedProfit: 443.95,
+        projectedTripRPM: 1.79,
+        routeFitScore: 35,
+        riskScore: 70,
+        finalWeightedScore: 48
+      }
+    ];
+
+    const labels = simulationData.map(d => `${d.candidate}: ${d.vehicle}`);
+    const shortLabels = simulationData.map(d => d.candidate);
+
+    function baseBarOption(title, values, seriesName) {
+      return {
+        title: {
+          text: title,
+          left: "center"
+        },
+        tooltip: {
+          trigger: "axis"
+        },
+        xAxis: {
+          type: "category",
+          data: labels,
+          axisLabel: {
+            interval: 0,
+            rotate: 20
+          }
+        },
+        yAxis: {
+          type: "value"
+        },
+        series: [
+          {
+            name: seriesName,
+            type: "bar",
+            data: values,
+            label: {
+              show: true,
+              position: "top"
+            }
+          }
+        ],
+        grid: {
+          left: 60,
+          right: 30,
+          top: 60,
+          bottom: 90
+        }
+      };
+    }
+
+    const profitChart = echarts.init(document.getElementById("profitChart"));
+    profitChart.setOption(
+      baseBarOption(
+        "Profit by Candidate",
+        simulationData.map(d => d.profit),
+        "Profit"
+      )
+    );
+
+    const timeAdjustedChart = echarts.init(document.getElementById("timeAdjustedChart"));
+    timeAdjustedChart.setOption(
+      baseBarOption(
+        "Time-Adjusted Profit",
+        simulationData.map(d => d.timeAdjustedProfit),
+        "Time-Adjusted Profit"
+      )
+    );
+
+    const rpmChart = echarts.init(document.getElementById("rpmChart"));
+    rpmChart.setOption({
+      title: {
+        text: "Projected Trip RPM vs Target",
+        left: "center"
+      },
+      tooltip: {
+        trigger: "axis"
+      },
+      legend: {
+        top: 28
+      },
+      xAxis: {
+        type: "category",
+        data: labels,
+        axisLabel: {
+          interval: 0,
+          rotate: 20
+        }
+      },
+      yAxis: {
+        type: "value"
+      },
+      series: [
+        {
+          name: "Projected Trip RPM",
+          type: "bar",
+          data: simulationData.map(d => d.projectedTripRPM),
+          label: {
+            show: true,
+            position: "top"
+          }
+        },
+        {
+          name: "Target RPM",
+          type: "line",
+          data: simulationData.map(() => 2.0),
+          symbol: "none"
+        }
+      ],
+      grid: {
+        left: 60,
+        right: 30,
+        top: 70,
+        bottom: 90
+      }
+    });
+
+    const scoreChart = echarts.init(document.getElementById("scoreChart"));
+    scoreChart.setOption(
+      baseBarOption(
+        "Final Weighted Score",
+        simulationData.map(d => d.finalWeightedScore),
+        "Score"
+      )
+    );
+
+    const radarChart = echarts.init(document.getElementById("radarChart"));
+    radarChart.setOption({
+      title: {
+        text: "Multi-Factor Candidate Comparison",
+        left: "center"
+      },
+      tooltip: {},
+      legend: {
+        top: 35,
+        data: shortLabels
+      },
+      radar: {
+        radius: "62%",
+        indicator: [
+          { name: "Profit", max: 100 },
+          { name: "Time Efficiency", max: 100 },
+          { name: "Route Fit", max: 100 },
+          { name: "RPM Fit", max: 100 },
+          { name: "Low Risk", max: 100 }
+        ]
+      },
+      series: [
+        {
+          type: "radar",
+          data: [
+            {
+              name: "A",
+              value: [90, 88, 95, 92, 90]
+            },
+            {
+              name: "B",
+              value: [100, 91, 78, 84, 65]
+            },
+            {
+              name: "C",
+              value: [93, 55, 35, 40, 30]
+            }
+          ]
+        }
+      ]
+    });
+
+    window.addEventListener("resize", function () {
+      profitChart.resize();
+      timeAdjustedChart.resize();
+      rpmChart.resize();
+      scoreChart.resize();
+      radarChart.resize();
+    });
+  </script>
+</body>
+</html>
