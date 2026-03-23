@@ -55,6 +55,7 @@ The system is built as a **multi-agent pipeline**:
 - **Booking Agent** — executes booking  
 - **Monitoring Agent** — handles re-planning  
 
+NOTE/ATTENTION: Maybe agents can be chaned into tools/skills!!!
 ---
 
 ## 3. Decision Flow
@@ -107,37 +108,27 @@ K -->|Low| X
 
 ### Profit
 
-```
-Profit = P 
-       - (M_add * C_mile)
-       - (T_add * C_time)
-       - Risk_penalty
-       - Route_penalty
-```
-
----
+$$
+Pr = P_{\text{revenue}} - \left(M_{\text{add}} \cdot C_{\text{mile}}\right) - \left(T_{\text{add}} \cdot C_{\text{time}}\right) - \text{Risk}_{\text{penalty}} - \text{Route}_{\text{penalty}}
+$$
 
 ### Profit per Mile
 
-```
-PPM = Profit / M_add
-```
-
----
+$$
+PPM = \frac{P}{M_{\mathrm{add}}}
+$$
 
 ### Time-Adjusted Profit
 
-```
-TimeAdjustedProfit = Profit / (1 + T_add)
-```
-
----
+$$
+\mathrm{TimeAdjustedProfit} = \frac{P}{1 + T_{\mathrm{add}}}
+$$
 
 ### Trip RPM
 
-```
-ProjectedTripRPM = TotalRevenue / TotalMiles
-```
+$$
+\mathrm{ProjectedTripRPM} = \frac{\mathrm{TotalRevenue}}{\mathrm{TotalMiles}}
+$$
 
 Target:
 - ≥ 2.0 → good  
@@ -238,7 +229,7 @@ Else → dispatcher review
 
 ---
 
-## 11. Monitoring
+## 11. Monitoring 
 
 System tracks:
 - ETA changes
@@ -265,23 +256,11 @@ Decision: AUTO-BOOK
 
 ---
 
-## 13. Conclusion
-
-The system enables safe and efficient autopilot dispatching by:
-
-- optimizing full trip profitability  
-- minimizing risk  
-- maintaining route efficiency  
-- enabling explainable AI decisions  
-
-
-
-
-## 14. Example Simulation: Selecting the Third Vehicle
+## 13. Example Simulation: Selecting the Third Vehicle
 
 This section demonstrates how the autopilot can evaluate multiple real vehicle loads and choose the most profitable third car for the remaining trailer slot.
 
-### 14.1 Existing Confirmed Vehicles
+### 13.1 Existing Confirmed Vehicles
 
 The trailer already has two confirmed vehicles:
 
@@ -304,7 +283,7 @@ The autopilot must evaluate available marketplace loads and select the best thir
 
 ---
 
-### 14.2 Candidate Vehicles from Load Boards
+### 13.2 Candidate Vehicles from Load Boards
 
 Below are three simulated candidate vehicle loads discovered through load boards / marketplaces.
 
@@ -316,7 +295,7 @@ Below are three simulated candidate vehicle loads discovered through load boards
 
 ---
 
-### 14.3 Why Vehicle Details Matter
+### 13.3 Why Vehicle Details Matter
 
 The autopilot should not evaluate loads based only on payout and destination.  
 Vehicle-level attributes matter because they may affect trailer fit, loading complexity, unloading order, and operational risk.
@@ -332,7 +311,7 @@ This means the system should evaluate both:
 
 ---
 
-### 14.4 Assumptions for the Simulation
+### 13.4 Assumptions for the Simulation
 
 - Cost per extra mile = **$0.85**
 - Time cost per extra day = **$250**
@@ -343,7 +322,7 @@ This means the system should evaluate both:
 
 ---
 
-### 14.5 Profitability Calculation
+### 13.5 Profitability Calculation
 
 #### Candidate A — 2020 Hyundai Sonata
 ```text
@@ -368,7 +347,7 @@ Profit = $843.50
 
 ---
 
-### 14.6 Derived Metrics
+### 13.6 Derived Metrics
 
 | Candidate | Vehicle | Profit | Profit per Extra Mile | Time-Adjusted Profit | Route Fit | Operational Risk | Estimated Trip RPM |
 |-----------|---------|--------|------------------------|----------------------|-----------|------------------|--------------------|
@@ -378,7 +357,7 @@ Profit = $843.50
 
 ---
 
-### 14.7 Vehicle-Aware Decision Logic
+### 13.7 Vehicle-Aware Decision Logic
 
 The system should evaluate each candidate not only as a lane, but as a specific vehicle load.
 
@@ -420,7 +399,7 @@ Concerns:
 
 ---
 
-### 14.8 Final Selection
+### 13.8 Final Selection
 
 **Selected Candidate: A — 2020 Hyundai Sonata**
 
@@ -440,7 +419,7 @@ This is exactly the type of decision an autopilot should make:
 
 ---
 
-### 14.9 Example Decision Output
+### 13.9 Example Decision Output
 
 ```text
 Selected Load: Candidate A
@@ -465,36 +444,11 @@ Decision: AUTO-BOOK
 
 ---
 
-### 14.10 Visual Validation
-
-The simulated decision can be validated visually using charts and route maps:
-
-- **Bar chart:** profit by candidate
-- **Bar chart:** time-adjusted profit by candidate
-- **Bar chart:** projected trip RPM by candidate
-- **Map / route chart:** current route and candidate delivery directions
-- **Final score chart:** weighted ranking combining route fit, risk, and profitability
-
-This makes the autopilot decision explainable for dispatchers and helps validate that the selected vehicle improves the trip rather than just adding revenue on paper.
-
----
-
-### 14.11 Key Takeaway
-
-This simulation shows that the agent should reason over **vehicle-level load data**, not just route points.
-
-A correct autopilot decision depends on:
-- the vehicle itself
-- where it is picked up and delivered
-- how it fits the current route
-- how much time and distance it adds
-- whether it improves or harms trip-level profitability
-
-## 15. Simulation Charts
+## 14. Simulation Charts
 
 The following chart pack validates the simulated decision logic for selecting the third vehicle and makes the recommendation easier to explain to dispatchers, operations managers, and product stakeholders.
 
-### 15.1 Route Simulation Map
+### 14.1 Route Simulation Map
 
 ![Route Simulation](<./ScreenRecording2026-03-23at18.14.07-ezgif.com-video-to-gif-converter.gif>)
 
@@ -503,7 +457,7 @@ The blue line represents the existing committed route from Boston through Des Mo
 The highlighted solid candidate line represents the selected option, while the dashed routes represent alternatives considered but not chosen.
 This visual makes it immediately clear that Candidate A stays closest to the current route plan, while Candidate C introduces a much larger detour toward Salt Lake City.
 
-### 15.2 Profit by Candidate
+### 14.2 Profit by Candidate
 
 ![Profit by Candidate](<./line-simple (11).png>)
 
@@ -511,55 +465,43 @@ This chart compares the direct incremental profit contribution of each candidate
 Candidate B produces the highest raw profit at **$907.00**, followed by Candidate C at **$843.50**, and Candidate A at **$811.75**.
 On profit alone, Candidate B appears strongest, which is useful because it shows why a purely revenue-driven autopilot could make the wrong decision if it ignores route structure and execution risk.
 
-### 15.3 Time-Adjusted Profit
+### 14.3 Time-Adjusted Profit
 
-![Time-Adjusted Profit](<./line-simple (13).png>)
+![Profit Breakdown by Candidate](<./line-simple (10).png>)
 
 Time-adjusted profit normalizes each option for delivery delay and route elongation.
 Candidate B still leads at **$697.69**, Candidate A remains close at **$676.46**, and Candidate C drops sharply to **$443.95** because of the much larger time burden.
 This confirms that Candidate C's higher payout does not translate into the best operational outcome once time cost is included.
 
-### 15.4 Projected Trip RPM vs Target
+### 14.4 Projected Trip RPM vs Target
 
-![Projected Trip RPM vs Target](<./line-simple (14).png>)
+![Time-Adjusted Profit](<./line-simple (13).png>)
 
 This chart compares the projected full-trip RPM for each candidate against the minimum target of **$2.00 per mile**.
 Candidate A reaches **2.21**, Candidate B stays slightly above threshold at **2.08**, and Candidate C falls below the target at **1.79**.
 This is a critical screening chart because it shows that Candidate C degrades the economics of the overall trip even though its payout is attractive.
 
-### 15.5 Final Weighted Score
+### 14.5 Final Weighted Score
 
-![Final Weighted Score](<./line-simple (15).png>)
+![Projected Trip RPM vs Target](<./line-simple (14).png>)
 
 The final weighted score combines route fit, risk, RPM compliance, profitability, and time efficiency into a single decision metric.
 Candidate A scores **90**, Candidate B scores **82**, and Candidate C scores **48**.
 This is the key summary chart for autopilot selection because it transforms several competing dimensions into one explainable ranking and supports why Candidate A should be auto-booked.
 
-### 15.6 Multi-Factor Decision Analysis
+### 14.6 Multi-Factor Decision Analysis
 
-![Multi-Factor Decision Analysis](<./line-simple (16).png>)
+![Final Weighted Score](<./line-simple (15).png>)
 
 The radar chart shows how each candidate performs across the main decision dimensions: profit score, low-risk score, RPM compliance, route fit, and time efficiency.
 Candidate A is the most balanced option across all dimensions, Candidate B is strong economically but weaker on risk and route fit, and Candidate C underperforms on most operational factors despite its attractive payout.
 This chart is useful for product demos because it shows that the system is not using a single rule, but making a genuinely multi-objective decision.
 
-### 15.7 Profit Breakdown by Candidate
+### 14.7 Profit Breakdown by Candidate
 
-![Profit Breakdown by Candidate](<./line-simple (10).png>)
+![Multi-Factor Decision Analysis](<./line-simple (16).png>)
 
 This breakdown separates payout, cost burden, and final profit for each candidate.
 Candidate C has the highest payout at **$1,400**, but it also carries the largest cost penalty at **-$556.50**, which compresses its final profit.
 Candidate A and Candidate B generate more efficient profit because their additional route burden is much lower.
 This chart helps explain why gross payout should never be used as the only booking criterion.
-
-### 15.8 Supporting Interpretation
-
-Together, these charts show why the selected recommendation is **Candidate A — 2020 Hyundai Sonata**:
-
-- it preserves the best route structure on the map
-- it keeps projected trip RPM safely above target
-- it delivers strong profit with low added complexity
-- it achieves the highest final weighted decision score
-- it remains operationally safer than the higher-detour alternatives
-
-In other words, the chart pack confirms that the autopilot is selecting the **best trip-level outcome**, not simply the highest payout or the highest isolated raw profit.
