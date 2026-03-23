@@ -494,11 +494,9 @@ A correct autopilot decision depends on:
 
 The following chart pack validates the simulated decision logic for selecting the third vehicle and makes the recommendation easier to explain to dispatchers, operations managers, and product stakeholders.
 
-Interactive version: [Open simulation charts](./simulation_charts.html)
-
 ### 15.1 Route Simulation Map
 
-![Autopilot Load Selection Route Simulation](<./geo-graph (1).png>)
+![Route Simulation](<./ScreenRecording2026-03-23at18.14.07-ezgif.com-video-to-gif-converter.gif>)
 
 This route map shows the confirmed trip structure and all three candidate options on top of the same geographic corridor.
 The blue line represents the existing committed route from Boston through Des Moines to Denver.
